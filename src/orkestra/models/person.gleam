@@ -1,9 +1,12 @@
 import gleam/dynamic/decode
+import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
+import gleam/time/timestamp
 import orkestra/error.{type Error}
+import orkestra/generated/sql
 import sqlight
 
 pub type MemberRow {
@@ -114,4 +117,106 @@ fn build_filters(
   }
 
   #(string.join(clauses, ""), params)
+}
+
+pub fn create_person(
+  db: sqlight.Connection,
+  first_name: String,
+  last_name: String,
+  email: String,
+  phone: String,
+  street_address: String,
+  postal_code: String,
+  city: String,
+  section_id: Option(Int),
+  metadata: String,
+  instrument_ids: List(Int),
+) -> Result(Int, Error) {
+  let #(now, _nanoseconds) =
+    timestamp.system_time() |> timestamp.to_unix_seconds_and_nanoseconds
+
+  let section_param = case section_id {
+    Some(id) -> sqlight.int(id)
+    None -> sqlight.null()
+  }
+
+  let id_decoder = decode.at([0], decode.int)
+
+  use _ <- result.try(
+    sqlight.exec("BEGIN", db) |> result.map_error(error.DatabaseError),
+  )
+
+  let person_result =
+    sql.create_person(
+      db,
+      args: [
+        sqlight.text(first_name),
+        sqlight.text(last_name),
+        sqlight.text(email),
+        sqlight.text(phone),
+        sqlight.text(street_address),
+        sqlight.text(postal_code),
+        sqlight.text(city),
+        section_param,
+        sqlight.text(metadata),
+        sqlight.int(now),
+        sqlight.int(now),
+      ],
+      decoder: id_decoder,
+    )
+
+  case person_result {
+    Ok([person_id]) -> {
+      let instruments_result =
+        insert_person_instruments(db, person_id, instrument_ids)
+      case instruments_result {
+        Ok(Nil) -> {
+          let assert Ok(Nil) =
+            sqlight.exec("COMMIT", db)
+            |> result.map_error(error.DatabaseError)
+          Ok(person_id)
+        }
+        Error(e) -> {
+          let _ = sqlight.exec("ROLLBACK", db)
+          Error(e)
+        }
+      }
+    }
+    Ok(_) -> {
+      let _ = sqlight.exec("ROLLBACK", db)
+      Error(
+        error.DatabaseError(sqlight.SqlightError(
+          sqlight.Notfound,
+          "Expected one row from RETURNING",
+          -1,
+        )),
+      )
+    }
+    Error(e) -> {
+      let _ = sqlight.exec("ROLLBACK", db)
+      Error(e)
+    }
+  }
+}
+
+fn insert_person_instruments(
+  db: sqlight.Connection,
+  person_id: Int,
+  instrument_ids: List(Int),
+) -> Result(Nil, Error) {
+  case instrument_ids {
+    [] -> Ok(Nil)
+    [id, ..rest] -> {
+      let sql =
+        "INSERT INTO person_instrument (person_id, instrument_id) VALUES ("
+        <> int.to_string(person_id)
+        <> ", "
+        <> int.to_string(id)
+        <> ")"
+      case sqlight.exec(sql, db) |> result.map_error(error.DatabaseError) {
+        Ok(Nil) -> insert_person_instruments(db, person_id, rest)
+        Error(e) -> Error(e)
+      }
+    }
+  }
 }
