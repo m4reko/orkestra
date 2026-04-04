@@ -287,13 +287,136 @@ A small JSON API (`/api/...`) exists for external integrations — at minimum fo
 
 ## 4. Data Model
 
-The data model is identical to the Python version — see [mvp-spec.md](mvp-spec.md) for the conceptual model and [technical-spec-python.md](technical-spec-python.md) for the full ER diagram. The SQL schema uses the same tables:
+See [mvp-spec.md](mvp-spec.md) for the conceptual model.
 
+```mermaid
+erDiagram
+    section {
+        int id PK
+        text name UK
+    }
+
+    instrument {
+        int id PK
+        text name UK
+        int section_id FK
+    }
+
+    person {
+        int id PK
+        text first_name
+        text last_name
+        text email
+        text phone
+        text street_address
+        text postal_code
+        text city
+        int section_id FK
+        text metadata
+        int created_at "unix timestamp"
+        int updated_at "unix timestamp"
+    }
+
+    person_instrument {
+        int person_id PK,FK
+        int instrument_id PK,FK
+    }
+
+    membership_period {
+        int id PK
+        int person_id FK
+        text start_date "ISO 8601 date"
+        text end_date "ISO 8601 date, NULL = active"
+    }
+
+    account {
+        int id PK
+        text google_email UK
+        int person_id FK
+        int is_admin
+    }
+
+    section_leader {
+        int account_id PK,FK
+        int section_id PK,FK
+    }
+
+    project {
+        int id PK
+        text name
+        text concert_date "ISO 8601 date"
+        int created_at "unix timestamp"
+    }
+
+    rehearsal_date {
+        int id PK
+        int project_id FK
+        text date "ISO 8601 date"
+    }
+
+    sheet_music_link {
+        int id PK
+        int project_id FK
+        text label
+        text url
+    }
+
+    project_assignment {
+        int id PK
+        int project_id FK
+        int person_id FK
+        int instrument_id FK
+        text part
+    }
+
+    rehearsal_absence {
+        int id PK
+        int project_id FK
+        int person_id FK
+        int rehearsal_date_id FK
+        int reported_by_person_id FK
+        int reported_by_account_id FK
+        int created_at "unix timestamp"
+    }
+
+    magic_token {
+        int id PK
+        int person_id FK
+        text token_hash UK
+        int expires_at "unix timestamp"
+        int created_at "unix timestamp"
+    }
+
+    notification {
+        int id PK
+        int person_id FK
+        text type
+        text payload "JSON"
+        int created_at "unix timestamp"
+        int sent_at "unix timestamp, NULL until sent"
+    }
+
+    section ||--o{ instrument : contains
+    section ||--o{ person : "belongs to"
+    section ||--o{ section_leader : ""
+    person ||--o{ person_instrument : ""
+    instrument ||--o{ person_instrument : ""
+    person ||--o{ membership_period : ""
+    person ||--o| account : ""
+    account ||--o{ section_leader : ""
+    project ||--o{ rehearsal_date : ""
+    project ||--o{ sheet_music_link : ""
+    project ||--o{ project_assignment : ""
+    person ||--o{ project_assignment : ""
+    instrument ||--o{ project_assignment : ""
+    project ||--o{ rehearsal_absence : ""
+    person ||--o{ rehearsal_absence : "absent"
+    rehearsal_date ||--o{ rehearsal_absence : ""
+    person ||--o{ magic_token : ""
+    person ||--o{ notification : ""
 ```
-section, instrument, person, person_instrument, membership_period,
-account, section_leader, project, rehearsal_date, sheet_music_link,
-project_assignment, rehearsal_absence, magic_token, notification
-```
+
+Calendar dates (concert, rehearsal, membership) stored as ISO 8601 date strings (YYYY-MM-DD). Timestamps (created_at, updated_at, etc.) stored as Unix timestamp integers.
 
 ### Models
 
