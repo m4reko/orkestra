@@ -12,9 +12,9 @@
   --color-secondary: oklch(21.78% 0 0);
   --color-secondary-content: oklch(97.98% 0.004 78);
 
-  /* Accent: Dark Red — hover accents, subtle emphasis */
-  --color-accent: oklch(41.84% 0.1469 18.856);
-  --color-accent-content: oklch(100% 0 0);
+  /* Accent: Warm Brass — orchestral gold, subtle emphasis */
+  --color-accent: oklch(72% 0.1 75);
+  --color-accent-content: oklch(21.78% 0 0);
 
   /* Neutral: UBS Black */
   --color-neutral: oklch(21.78% 0 0);

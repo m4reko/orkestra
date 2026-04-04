@@ -52,11 +52,22 @@ pub fn wrap(title: String, content: Element(a)) -> Element(a) {
         html.div(
           [attribute.class("navbar bg-neutral text-neutral-content px-4")],
           [
-            html.div([attribute.class("navbar-start")], [
+            html.div([attribute.class("navbar-start gap-3")], [
+              html.img([
+                attribute.src("/static/ubs-logo.png"),
+                attribute.alt("UBS"),
+                attribute.attribute("style", "height: 32px"),
+              ]),
               html.a(
                 [
                   attribute.href("/members"),
-                  attribute.class("text-lg font-bold"),
+                  attribute.class(
+                    "text-lg font-bold",
+                  ),
+                  attribute.attribute(
+                    "style",
+                    "font-family: 'Playfair Display', serif",
+                  ),
                 ],
                 [element.text("Uppsala Blåsarsymfoniker")],
               ),

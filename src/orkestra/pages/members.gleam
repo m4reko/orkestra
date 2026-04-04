@@ -179,7 +179,7 @@ pub fn add_page(
   instruments: List(Instrument),
   today: String,
 ) -> Element(a) {
-  html.div([], [
+  html.div([attribute.class("max-w-lg mx-auto")], [
     html.h1([attribute.class("text-xl font-bold mb-4")], [
       element.text("Lägg till person"),
     ]),
@@ -187,7 +187,7 @@ pub fn add_page(
       [
         attribute.method("post"),
         attribute.attribute("action", "/members"),
-        attribute.class("space-y-4 max-w-lg"),
+        attribute.class("space-y-4"),
       ],
       [
         text_field("first_name", "Förnamn", True),
@@ -316,28 +316,22 @@ fn instrument_checkboxes(instruments: List(Instrument)) -> Element(a) {
       element.text("Instrument"),
     ]),
     ..list.map(grouped, fn(group) {
-      let #(section_name, section_instruments) = group
-      html.div([], [
-        html.p(
-          [attribute.class("text-xs text-base-content/60 font-medium mt-2")],
-          [element.text(section_name)],
-        ),
-        html.div(
-          [attribute.class("flex flex-wrap gap-x-4 gap-y-1")],
-          list.map(section_instruments, fn(i) {
-            let id_str = int.to_string(i.id)
-            html.label([attribute.class("flex items-center gap-1 text-sm")], [
-              html.input([
-                attribute.type_("checkbox"),
-                attribute.name("instrument"),
-                attribute.value(id_str),
-                attribute.class("checkbox checkbox-sm"),
-              ]),
-              element.text(i.name),
-            ])
-          }),
-        ),
-      ])
+      let #(_section_name, section_instruments) = group
+      html.div(
+        [attribute.class("flex flex-wrap gap-x-4 gap-y-1 mb-2")],
+        list.map(section_instruments, fn(i) {
+          let id_str = int.to_string(i.id)
+          html.label([attribute.class("flex items-center gap-1 text-sm")], [
+            html.input([
+              attribute.type_("checkbox"),
+              attribute.name("instrument"),
+              attribute.value(id_str),
+              attribute.class("checkbox checkbox-sm"),
+            ]),
+            element.text(i.name),
+          ])
+        }),
+      )
     })
   ])
 }
