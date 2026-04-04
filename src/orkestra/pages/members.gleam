@@ -23,12 +23,7 @@ pub fn list_page(
         element.text("Medlemmar"),
       ]),
       html.a(
-        [
-          attribute.href("/members/new"),
-          attribute.class(
-            "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700",
-          ),
-        ],
+        [attribute.href("/members/new"), attribute.class("btn btn-primary")],
         [element.text("Lägg till person")],
       ),
     ]),
@@ -56,7 +51,7 @@ fn filter_form(
         attribute.name("search"),
         attribute.value(current_search),
         attribute.placeholder("Sök namn..."),
-        attribute.class("border rounded px-2 py-1"),
+        attribute.class("input input-sm"),
         hx.trigger([hx.with_delay(hx.input(), duration.milliseconds(300))]),
         ..filter_hx_attrs()
       ]),
@@ -77,7 +72,7 @@ fn status_select(current: String) -> Element(a) {
   html.select(
     [
       attribute.name("status"),
-      attribute.class("border rounded px-2 py-1"),
+      attribute.class("select select-sm"),
       hx.trigger([hx.change()]),
       ..filter_hx_attrs()
     ],
@@ -112,7 +107,7 @@ fn section_select(sections: List(Section), current: String) -> Element(a) {
   html.select(
     [
       attribute.name("section"),
-      attribute.class("border rounded px-2 py-1"),
+      attribute.class("select select-sm"),
       hx.trigger([hx.change()]),
       ..filter_hx_attrs()
     ],
@@ -130,17 +125,17 @@ fn selected_if(condition: Bool) -> List(attribute.Attribute(a)) {
 pub fn member_table(members: List(MemberRow)) -> Element(a) {
   case members {
     [] ->
-      html.p([attribute.class("text-gray-500 py-4")], [
+      html.p([attribute.class("text-base-content/60 py-4")], [
         element.text("Inga personer hittades."),
       ])
     _ ->
-      html.table([attribute.class("w-full text-left")], [
+      html.table([attribute.class("table")], [
         html.thead([], [
-          html.tr([attribute.class("border-b")], [
-            html.th([attribute.class("py-2")], [element.text("Namn")]),
-            html.th([attribute.class("py-2")], [element.text("Instrument")]),
-            html.th([attribute.class("py-2")], [element.text("Sektion")]),
-            html.th([attribute.class("py-2")], [element.text("Status")]),
+          html.tr([], [
+            html.th([], [element.text("Namn")]),
+            html.th([], [element.text("Instrument")]),
+            html.th([], [element.text("Sektion")]),
+            html.th([], [element.text("Status")]),
           ]),
         ]),
         html.tbody([], list.map(members, member_row)),
@@ -149,28 +144,27 @@ pub fn member_table(members: List(MemberRow)) -> Element(a) {
 }
 
 fn member_row(member: MemberRow) -> Element(a) {
-  html.tr([attribute.class("border-b")], [
-    html.td([attribute.class("py-2")], [
+  html.tr([], [
+    html.td([], [
       element.text(member.first_name <> " " <> member.last_name),
     ]),
-    html.td([attribute.class("py-2")], [
+    html.td([], [
       element.text(option_or(member.instruments, "—")),
     ]),
-    html.td([attribute.class("py-2")], [
+    html.td([], [
       element.text(option_or(member.section_name, "—")),
     ]),
-    html.td([attribute.class("py-2")], [
-      element.text(status_label(member.membership_status)),
-    ]),
+    html.td([], [status_badge(member.membership_status)]),
   ])
 }
 
-fn status_label(status: String) -> String {
-  case status {
-    "current" -> "Aktiv medlem"
-    "former" -> "Tidigare medlem"
-    _ -> "Icke-medlem"
+fn status_badge(status: String) -> Element(a) {
+  let #(label, class) = case status {
+    "current" -> #("Aktiv medlem", "badge badge-sm badge-success")
+    "former" -> #("Tidigare medlem", "badge badge-sm badge-neutral")
+    _ -> #("Icke-medlem", "badge badge-sm badge-ghost")
   }
+  html.span([attribute.class(class)], [element.text(label)])
 }
 
 fn option_or(opt: Option(String), default: String) -> String {
@@ -183,6 +177,7 @@ fn option_or(opt: Option(String), default: String) -> String {
 pub fn add_page(
   sections: List(Section),
   instruments: List(Instrument),
+  today: String,
 ) -> Element(a) {
   html.div([], [
     html.h1([attribute.class("text-xl font-bold mb-4")], [
@@ -204,22 +199,15 @@ pub fn add_page(
         text_field("city", "Postort", False),
         add_section_select(sections),
         instrument_checkboxes(instruments),
+        membership_section(today),
         textarea_field("metadata", "Metadata"),
         html.div([attribute.class("flex gap-3")], [
           html.button(
-            [
-              attribute.type_("submit"),
-              attribute.class(
-                "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700",
-              ),
-            ],
+            [attribute.type_("submit"), attribute.class("btn btn-primary")],
             [element.text("Spara")],
           ),
           html.a(
-            [
-              attribute.href("/members"),
-              attribute.class("px-4 py-2 rounded border hover:bg-gray-100"),
-            ],
+            [attribute.href("/members"), attribute.class("btn btn-ghost")],
             [element.text("Avbryt")],
           ),
         ]),
@@ -230,17 +218,14 @@ pub fn add_page(
 
 fn text_field(name: String, label: String, required: Bool) -> Element(a) {
   html.div([], [
-    html.label(
-      [attribute.for(name), attribute.class("block text-sm font-medium mb-1")],
-      [
-        element.text(label),
-      ],
-    ),
+    html.label([attribute.for(name), attribute.class("label")], [
+      element.text(label),
+    ]),
     html.input([
       attribute.type_("text"),
       attribute.name(name),
       attribute.id(name),
-      attribute.class("border rounded px-2 py-1 w-full"),
+      attribute.class("input w-full"),
       ..case required {
         True -> [attribute.required(True)]
         False -> []
@@ -251,21 +236,55 @@ fn text_field(name: String, label: String, required: Bool) -> Element(a) {
 
 fn textarea_field(name: String, label: String) -> Element(a) {
   html.div([], [
-    html.label(
-      [attribute.for(name), attribute.class("block text-sm font-medium mb-1")],
-      [
-        element.text(label),
-      ],
-    ),
+    html.label([attribute.for(name), attribute.class("label")], [
+      element.text(label),
+    ]),
     html.textarea(
       [
         attribute.name(name),
         attribute.id(name),
-        attribute.class("border rounded px-2 py-1 w-full"),
+        attribute.class("textarea w-full"),
         attribute.attribute("rows", "3"),
       ],
       "",
     ),
+  ])
+}
+
+fn membership_section(today: String) -> Element(a) {
+  html.fieldset([attribute.class("fieldset")], [
+    html.legend([attribute.class("fieldset-legend")], [
+      element.text("Medlemskap"),
+    ]),
+    html.label([attribute.class("flex items-center gap-2 text-sm")], [
+      html.input([
+        attribute.type_("checkbox"),
+        attribute.name("active_member"),
+        attribute.value("true"),
+        attribute.class("checkbox checkbox-sm"),
+        attribute.attribute(
+          "onclick",
+          "document.getElementById('membership-date').classList.toggle('hidden')",
+        ),
+      ]),
+      element.text("Aktiv medlem"),
+    ]),
+    html.div([attribute.id("membership-date"), attribute.class("hidden")], [
+      html.label(
+        [
+          attribute.for("membership_start"),
+          attribute.class("label"),
+        ],
+        [element.text("Startdatum")],
+      ),
+      html.input([
+        attribute.type_("date"),
+        attribute.name("membership_start"),
+        attribute.id("membership_start"),
+        attribute.value(today),
+        attribute.class("input w-full"),
+      ]),
+    ]),
   ])
 }
 
@@ -276,18 +295,14 @@ fn add_section_select(sections: List(Section)) -> Element(a) {
     })
 
   html.div([], [
-    html.label(
-      [
-        attribute.for("section_id"),
-        attribute.class("block text-sm font-medium mb-1"),
-      ],
-      [element.text("Sektion")],
-    ),
+    html.label([attribute.for("section_id"), attribute.class("label")], [
+      element.text("Sektion"),
+    ]),
     html.select(
       [
         attribute.name("section_id"),
         attribute.id("section_id"),
-        attribute.class("border rounded px-2 py-1 w-full"),
+        attribute.class("select w-full"),
       ],
       [html.option([attribute.value("")], "Ingen sektion"), ..section_options],
     ),
@@ -296,16 +311,17 @@ fn add_section_select(sections: List(Section)) -> Element(a) {
 
 fn instrument_checkboxes(instruments: List(Instrument)) -> Element(a) {
   let grouped = group_by_section(instruments)
-  html.fieldset([attribute.class("space-y-3")], [
-    html.legend([attribute.class("text-sm font-medium mb-1")], [
+  html.fieldset([attribute.class("fieldset")], [
+    html.legend([attribute.class("fieldset-legend")], [
       element.text("Instrument"),
     ]),
     ..list.map(grouped, fn(group) {
       let #(section_name, section_instruments) = group
       html.div([], [
-        html.p([attribute.class("text-xs text-gray-500 font-medium mt-2")], [
-          element.text(section_name),
-        ]),
+        html.p(
+          [attribute.class("text-xs text-base-content/60 font-medium mt-2")],
+          [element.text(section_name)],
+        ),
         html.div(
           [attribute.class("flex flex-wrap gap-x-4 gap-y-1")],
           list.map(section_instruments, fn(i) {
@@ -315,6 +331,7 @@ fn instrument_checkboxes(instruments: List(Instrument)) -> Element(a) {
                 attribute.type_("checkbox"),
                 attribute.name("instrument"),
                 attribute.value(id_str),
+                attribute.class("checkbox checkbox-sm"),
               ]),
               element.text(i.name),
             ])
