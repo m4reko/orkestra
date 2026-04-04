@@ -1,5 +1,4 @@
 -- Initial schema: sections, instruments, persons, membership
--- depends:
 
 CREATE TABLE section (
     id INTEGER PRIMARY KEY,
