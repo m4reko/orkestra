@@ -131,6 +131,7 @@ pub fn create_person(
   section_id: Option(Int),
   metadata: String,
   instrument_ids: List(Int),
+  membership_start: Option(String),
 ) -> Result(Int, Error) {
   let #(now, _nanoseconds) =
     timestamp.system_time() |> timestamp.to_unix_seconds_and_nanoseconds
@@ -167,20 +168,18 @@ pub fn create_person(
 
   case person_result {
     Ok([person_id]) -> {
-      let instruments_result =
-        insert_person_instruments(db, person_id, instrument_ids)
-      case instruments_result {
-        Ok(Nil) -> {
-          let assert Ok(Nil) =
-            sqlight.exec("COMMIT", db)
-            |> result.map_error(error.DatabaseError)
-          Ok(person_id)
-        }
-        Error(e) -> {
-          let _ = sqlight.exec("ROLLBACK", db)
-          Error(e)
-        }
-      }
+      use _ <- try_or_rollback(
+        db,
+        insert_person_instruments(db, person_id, instrument_ids),
+      )
+      use _ <- try_or_rollback(
+        db,
+        insert_membership_period(db, person_id, membership_start),
+      )
+      let assert Ok(Nil) =
+        sqlight.exec("COMMIT", db)
+        |> result.map_error(error.DatabaseError)
+      Ok(person_id)
     }
     Ok(_) -> {
       let _ = sqlight.exec("ROLLBACK", db)
@@ -217,6 +216,41 @@ fn insert_person_instruments(
         Ok(Nil) -> insert_person_instruments(db, person_id, rest)
         Error(e) -> Error(e)
       }
+    }
+  }
+}
+
+fn insert_membership_period(
+  db: sqlight.Connection,
+  person_id: Int,
+  membership_start: Option(String),
+) -> Result(Nil, Error) {
+  case membership_start {
+    None -> Ok(Nil)
+    Some(start_date) -> {
+      sqlight.exec(
+        "INSERT INTO membership_period (person_id, start_date) VALUES ("
+          <> int.to_string(person_id)
+          <> ", '"
+          <> start_date
+          <> "')",
+        db,
+      )
+      |> result.map_error(error.DatabaseError)
+    }
+  }
+}
+
+fn try_or_rollback(
+  db: sqlight.Connection,
+  result: Result(Nil, Error),
+  next: fn(Nil) -> Result(Int, Error),
+) -> Result(Int, Error) {
+  case result {
+    Ok(Nil) -> next(Nil)
+    Error(e) -> {
+      let _ = sqlight.exec("ROLLBACK", db)
+      Error(e)
     }
   }
 }

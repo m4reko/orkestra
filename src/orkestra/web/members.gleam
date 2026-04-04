@@ -1,6 +1,9 @@
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/time/calendar
+import gleam/time/duration
+import gleam/time/timestamp
 import lustre/element
 import orkestra/lib/response
 import orkestra/models/instrument
@@ -43,9 +46,10 @@ pub fn list(req: Request, ctx: Context) -> Response {
 pub fn new(_req: Request, ctx: Context) -> Response {
   let assert Ok(sections) = section.list_all(ctx.db)
   let assert Ok(instruments) = instrument.list_all(ctx.db)
+  let today = today_string()
 
   let page =
-    member_pages.add_page(sections, instruments)
+    member_pages.add_page(sections, instruments, today)
     |> layout.wrap("Lägg till person — UBS", _)
 
   wisp.html_response(element.to_document_string(page), 200)
@@ -81,6 +85,15 @@ pub fn create(req: Request, ctx: Context) -> Response {
       }
     })
 
+  let membership_start = case get("active_member") {
+    "true" ->
+      case get("membership_start") {
+        "" -> None
+        date -> Some(date)
+      }
+    _ -> None
+  }
+
   let assert Ok(_id) =
     person.create_person(
       ctx.db,
@@ -94,6 +107,7 @@ pub fn create(req: Request, ctx: Context) -> Response {
       section_id,
       metadata,
       instrument_ids,
+      membership_start,
     )
 
   wisp.redirect(to: "/members")
@@ -118,5 +132,22 @@ fn option_to_string(opt: Option(String)) -> String {
   case opt {
     Some(s) -> s
     None -> ""
+  }
+}
+
+fn today_string() -> String {
+  let #(date, _time) =
+    timestamp.system_time()
+    |> timestamp.to_calendar(duration.seconds(0))
+  let year = int.to_string(date.year)
+  let month = pad_zero(calendar.month_to_int(date.month))
+  let day = pad_zero(date.day)
+  year <> "-" <> month <> "-" <> day
+}
+
+fn pad_zero(n: Int) -> String {
+  case n < 10 {
+    True -> "0" <> int.to_string(n)
+    False -> int.to_string(n)
   }
 }
