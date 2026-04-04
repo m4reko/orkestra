@@ -1,9 +1,7 @@
-from app import create_app
+from flask.testing import FlaskClient
 
 
-def test_index() -> None:
-    app = create_app()
-    client = app.test_client()
+def test_index_redirects_to_members(client: FlaskClient) -> None:
     response = client.get("/")
-    assert response.status_code == 200
-    assert b"Uppsala" in response.data
+    assert response.status_code == 302
+    assert response.headers["Location"] == "/members"

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Medlemmar — UBS{% endblock %}
+{% block content %}
+<h1 class="text-xl font-bold mb-4">Medlemmar</h1>
+
+<form id="filter-form" class="flex gap-3 mb-4 flex-wrap">
+
+    <select name="status" class="border rounded px-2 py-1" hx-get="/members" hx-target="#member-list"
+        hx-swap="innerHTML" hx-trigger="change">
+        <option value="">Alla statusar</option>
+        <option value="current" {{ 'selected' if current_status=='current' }}>Aktiv medlem</option>
+        <option value="former" {{ 'selected' if current_status=='former' }}>Tidigare medlem</option>
+        <option value="non-member" {{ 'selected' if current_status=='non-member' }}>Icke-medlem</option>
+    </select>
+
+    <select name="section" class="border rounded px-2 py-1" hx-get="/members" hx-target="#member-list"
+        hx-swap="innerHTML" hx-trigger="change">
+        <option value="">Alla sektioner</option>
+        {% for s in sections %}
+        <option value="{{ s.id }}" {{ 'selected' if current_section==s.id|string }}>{{ s.name }}</option>
+        {% endfor %}
+    </select>
+
+    <input type="search" name="search" value="{{ current_search }}" placeholder="Sök namn..."
+        class="border rounded px-2 py-1" hx-get="/members" hx-target="#member-list" hx-swap="innerHTML"
+        hx-trigger="input delay:300ms">
+</form>
+
+<div id="member-list">
+    {% include "members/partials/member_list.html" %}
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}UBS{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}">
+    <script defer src="{{ url_for('static', filename='htmx.min.js') }}"></script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <nav class="bg-white border-b px-4 py-2">
+        <a href="/members" class="font-semibold">Uppsala Blåsarsymfoniker</a>
+    </nav>
+    <main class="max-w-5xl mx-auto px-4 py-6">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
