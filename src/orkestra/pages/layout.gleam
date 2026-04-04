@@ -54,7 +54,7 @@ pub fn wrap(title: String, content: Element(a)) -> Element(a) {
           [
             html.div([attribute.class("navbar-start gap-3")], [
               html.img([
-                attribute.src("/static/ubs-logo.png"),
+                attribute.src("/static/ubs-logo.svg"),
                 attribute.alt("UBS"),
                 attribute.attribute("style", "height: 32px"),
               ]),

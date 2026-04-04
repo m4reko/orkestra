@@ -3,103 +3,497 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+<title>UBS Graphical Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Source Sans 3', 'Segoe UI', sans-serif; background: #FAF8F5; color: #1A1A1A; }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-  .header { background: #1A1A1A; padding: 48px 32px; }
-  .header-inner { max-width: 720px; margin: 0 auto; }
-  .header-title { display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
-  .header-title .ubs { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 700; color: #B2292E; letter-spacing: -1px; }
-  .header-title .label { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 400; color: #FAF8F5; letter-spacing: 2px; }
-  .header-sub { color: #6B6460; font-size: 14px; letter-spacing: 1px; }
+  :root {
+    --ubs-red: #B2292E;
+    --dark-red: #8B1A2B;
+    --brass: #C4A35A;
+    --black: #1A1A1A;
+    --warm-gray: #6B6460;
+    --warm-white: #FAF8F5;
+    --border: #E0DDD8;
+    --card: #FFFFFF;
+    --surface: #F0EEEB;
+  }
 
-  .container { max-width: 720px; margin: 0 auto; padding: 40px 32px; }
-  section { margin-bottom: 48px; }
-  h2 { font-family: 'Playfair Display', serif; font-size: 24px; color: #1A1A1A; margin-bottom: 20px; }
-  .section-note { color: #6B6460; font-size: 14px; margin-top: -16px; margin-bottom: 20px; }
+  body {
+    font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
+    background: var(--warm-white);
+    color: var(--black);
+    -webkit-font-smoothing: antialiased;
+  }
 
-  /* Color Palette */
-  .swatches { display: flex; flex-wrap: wrap; gap: 12px; }
-  .swatch { border: 1px solid #e0ddd8; border-radius: 8px; overflow: hidden; min-width: 140px; flex: 1 1 140px; max-width: 200px; cursor: pointer; transition: transform 0.15s; background: #fff; }
-  .swatch:hover { transform: scale(1.04); }
-  .swatch-color { height: 80px; display: flex; align-items: flex-end; justify-content: flex-end; padding: 8px; }
-  .swatch-hex { font-family: monospace; font-size: 12px; opacity: 0.85; }
-  .swatch-info { padding: 12px; }
-  .swatch-name { font-size: 14px; font-weight: 600; }
-  .swatch-usage { font-size: 12px; color: #6B6460; margin-top: 4px; }
+  /* ── Header ─────────────────────────────────────── */
 
-  /* Typography cards */
-  .font-card { margin-bottom: 24px; padding: 24px; background: #fff; border-radius: 8px; border: 1px solid #e8e5e0; }
-  .font-header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+  .header {
+    background: var(--black);
+    padding: 64px 32px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(178,41,46,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .header-inner {
+    max-width: 780px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 16px;
+  }
+
+  .header-logo img {
+    height: 56px;
+    filter: drop-shadow(0 2px 8px rgba(178,41,46,0.3));
+  }
+
+  .header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--warm-white);
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+  }
+
+  .header-subtitle {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--warm-gray);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .header-rule {
+    width: 48px;
+    height: 2px;
+    background: var(--ubs-red);
+    border: none;
+    margin: 20px 0 16px;
+  }
+
+  .header-desc {
+    font-size: 15px;
+    font-weight: 300;
+    color: rgba(250,248,245,0.6);
+    max-width: 440px;
+    line-height: 1.6;
+  }
+
+  /* ── Container & Sections ───────────────────────── */
+
+  .container { max-width: 780px; margin: 0 auto; padding: 48px 32px 64px; }
+
+  section { margin-bottom: 56px; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+  }
+
+  .section-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--ubs-red);
+    min-width: 24px;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  .section-note {
+    font-size: 13px;
+    color: var(--warm-gray);
+    margin-top: -16px;
+    margin-bottom: 20px;
+  }
+
+  /* ── Color Palette ──────────────────────────────── */
+
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .swatch {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: var(--card);
+  }
+
+  .swatch:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(26,26,26,0.08);
+  }
+
+  .swatch-color {
+    height: 88px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 10px;
+    position: relative;
+  }
+
+  .swatch-hex {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    background: rgba(0,0,0,0.25);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  .swatch:hover .swatch-hex { opacity: 1; }
+
+  .swatch-info { padding: 12px 14px; }
+  .swatch-name { font-size: 13px; font-weight: 600; color: var(--black); }
+  .swatch-role { font-size: 11px; color: var(--warm-gray); margin-top: 2px; letter-spacing: 0.5px; }
+  .swatch-usage { font-size: 11px; color: var(--warm-gray); margin-top: 4px; line-height: 1.4; }
+
+  .swatch-copied {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+  }
+
+  .swatch.copied .swatch-copied { opacity: 1; }
+
+  /* ── Typography ─────────────────────────────────── */
+
+  .font-card {
+    padding: 28px;
+    background: var(--card);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .font-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
   .font-name { font-size: 20px; font-weight: 700; }
-  .font-role { font-size: 12px; color: #6B6460; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
-  .font-desc { font-size: 13px; color: #6B6460; margin-bottom: 12px; }
-  .font-sample { font-size: 16px; line-height: 1.5; margin-bottom: 12px; }
-  .font-meta { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #6B6460; }
-  .font-meta strong { color: #1A1A1A; }
-  .font-css { font-family: monospace; background: #f0eeeb; padding: 2px 6px; border-radius: 4px; }
+  .font-role { font-size: 11px; color: var(--warm-gray); font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; }
+  .font-desc { font-size: 13px; color: var(--warm-gray); margin-bottom: 16px; line-height: 1.5; }
 
-  /* Type Scale */
-  .scale-card { background: #fff; border-radius: 8px; border: 1px solid #e8e5e0; padding: 24px; }
-  .scale-row { display: flex; align-items: baseline; gap: 16px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid #f0eeeb; }
-  .scale-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-  .scale-label { font-size: 11px; color: #6B6460; font-weight: 600; letter-spacing: 1px; min-width: 56px; flex-shrink: 0; }
+  .font-sample {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    padding: 20px 24px;
+    background: var(--warm-white);
+    border-radius: 6px;
+    border-left: 3px solid var(--ubs-red);
+  }
 
-  /* Guidelines */
-  .guidelines-card { background: #fff; border-radius: 8px; border: 1px solid #e8e5e0; padding: 24px; }
-  .guideline-row { display: flex; flex-direction: column; gap: 2px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid #f0eeeb; }
-  .guideline-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-  .guideline-label { font-size: 13px; font-weight: 600; color: #1A1A1A; }
-  .guideline-value { font-size: 14px; color: #6B6460; }
+  .font-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--warm-gray);
+  }
 
-  /* Logo demo */
-  .logo-demos { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 20px; }
-  .logo-demo { flex: 1 1 200px; border-radius: 8px; padding: 32px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 120px; }
-  .logo-demo-light { background: #FAF8F5; border: 1px solid #e0ddd8; }
-  .logo-demo-dark { background: #1A1A1A; }
-  .logo-demo img { max-width: 180px; height: auto; }
-  .demo-caption { font-size: 11px; color: #6B6460; text-align: center; margin-top: 4px; }
+  .font-meta strong { color: var(--black); }
 
-  @media (max-width: 500px) {
-    .swatch { min-width: 120px; }
+  .font-css {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11px;
+    background: var(--surface);
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: var(--warm-gray);
+  }
+
+  /* ── Type Scale ─────────────────────────────────── */
+
+  .scale-card {
+    background: var(--card);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    padding: 28px;
+  }
+
+  .scale-row {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--surface);
+  }
+
+  .scale-row:last-child { border-bottom: none; }
+
+  .scale-label {
+    font-size: 10px;
+    color: var(--warm-gray);
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    min-width: 60px;
+    flex-shrink: 0;
+  }
+
+  .scale-size {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 10px;
+    color: var(--warm-gray);
+    min-width: 36px;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  /* ── DaisyUI Theme Map ──────────────────────────── */
+
+  .theme-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: var(--card);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .theme-table thead {
+    background: var(--surface);
+  }
+
+  .theme-table th {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--warm-gray);
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .theme-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--surface);
+    vertical-align: middle;
+  }
+
+  .theme-table tr:last-child td { border-bottom: none; }
+
+  .theme-dot {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  .theme-var {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11px;
+    color: var(--warm-gray);
+    background: var(--surface);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  /* ── Logo ────────────────────────────────────────── */
+
+  .logo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .logo-demo {
+    border-radius: 10px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 160px;
+  }
+
+  .logo-demo-light {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+  }
+
+  .logo-demo-dark { background: var(--black); }
+  .logo-demo-red { background: var(--ubs-red); }
+  .logo-demo-brass { background: var(--brass); }
+
+  .logo-demo img {
+    max-width: 140px;
+    height: auto;
+    transition: transform 0.3s ease;
+  }
+
+  .logo-demo:hover img { transform: scale(1.05); }
+
+  .demo-caption {
+    font-size: 11px;
+    color: var(--warm-gray);
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+
+  .logo-guidelines {
+    margin-top: 24px;
+    background: var(--card);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    padding: 24px 28px;
+  }
+
+  .guideline-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--surface);
+    gap: 16px;
+  }
+
+  .guideline-row:last-child { border-bottom: none; }
+  .guideline-label { font-size: 13px; font-weight: 600; color: var(--black); }
+  .guideline-value { font-size: 13px; color: var(--warm-gray); text-align: right; }
+
+  /* ── Footer ──────────────────────────────────────── */
+
+  .footer {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 24px 32px 48px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .footer-left { font-size: 12px; color: var(--warm-gray); }
+  .footer-right { font-size: 11px; color: var(--warm-gray); opacity: 0.6; }
+
+  /* ── Responsive ─────────────────────────────────── */
+
+  @media (max-width: 600px) {
+    .header { padding: 40px 20px 36px; }
+    .header-logo img { height: 40px; }
+    .header-title { font-size: 22px; }
+    .container { padding: 32px 20px 48px; }
+    .palette-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+    .logo-grid { grid-template-columns: 1fr; }
     .scale-row { flex-direction: column; gap: 4px; }
+    .theme-table { font-size: 12px; }
+    .theme-table td, .theme-table th { padding: 8px 12px; }
   }
 </style>
 </head>
 <body>
 
+<!-- ── Header ──────────────────────────────────────── -->
+
 <div class="header">
   <div class="header-inner">
-    <div class="header-title">
-      <img src="ubs-logo.png" alt="UBS" style="height: 48px;">
-      <span class="label">GRAPHICAL PROFILE</span>
+    <div class="header-logo">
+      <img src="ubs-logo.svg" alt="UBS">
+      <div class="header-text">
+        <span class="header-title">Graphical Profile</span>
+        <span class="header-subtitle">Uppsala Blasarsymfoniker</span>
+      </div>
     </div>
-    <div class="header-sub">UPPSALA BLÅSARSYMFONIKER</div>
+    <hr class="header-rule">
+    <p class="header-desc">Brand guidelines and design tokens for digital and print use. Maintained alongside the Orkestra project.</p>
   </div>
 </div>
 
 <div class="container">
 
-  <!-- Color Palette -->
+  <!-- ── 01 Color Palette ─────────────────────────── -->
+
   <section>
-    <h2>Color Palette</h2>
-    <p class="section-note">Click a swatch to copy the hex value.</p>
-    <div class="swatches" id="swatches"></div>
+    <div class="section-header">
+      <span class="section-number">01</span>
+      <h2>Color Palette</h2>
+    </div>
+    <p class="section-note">Click any swatch to copy its hex value.</p>
+    <div class="palette-grid" id="swatches"></div>
   </section>
 
-  <!-- Typography -->
+  <!-- ── 02 Typography ────────────────────────────── -->
+
   <section>
-    <h2>Typography</h2>
+    <div class="section-header">
+      <span class="section-number">02</span>
+      <h2>Typography</h2>
+    </div>
 
     <div class="font-card">
       <div class="font-header">
         <span class="font-name" style="font-family:'Playfair Display',serif">Playfair Display</span>
-        <span class="font-role">Primary – Headings</span>
+        <span class="font-role">Headings</span>
       </div>
-      <p class="font-desc">Matches the serif character of "UPPSALA BLÅSARSYMFONIKER" in the logo. Classical, high-contrast serif with elegant proportions.</p>
-      <div class="font-sample" style="font-family:'Playfair Display',serif; font-size:28px">Uppsala Blåsarsymfoniker</div>
+      <p class="font-desc">Classical high-contrast serif with elegant proportions. Matches the handwritten character of the UBS logo.</p>
+      <div class="font-sample" style="font-family:'Playfair Display',serif; font-size:26px; font-weight:700">Uppsala Blasarsymfoniker</div>
       <div class="font-meta">
         <span>Source: <strong>Google Fonts</strong></span>
         <span>Weights: <strong>400, 700</strong></span>
@@ -110,10 +504,10 @@
     <div class="font-card">
       <div class="font-header">
         <span class="font-name" style="font-family:'Source Sans 3',sans-serif">Source Sans 3</span>
-        <span class="font-role">Secondary – Body text</span>
+        <span class="font-role">Body &amp; UI</span>
       </div>
-      <p class="font-desc">Clean, readable sans-serif for body copy, UI, and digital communications. Neutral complement to the expressive heading font.</p>
-      <div class="font-sample" style="font-family:'Source Sans 3',sans-serif">Välkommen till Uppsala Blåsarsymfoniker – en amatörblåsorkester i Uppsala.</div>
+      <p class="font-desc">Clean, readable sans-serif for body copy and interface elements. Neutral complement to the expressive heading font.</p>
+      <div class="font-sample" style="font-family:'Source Sans 3',sans-serif">Valkommen till Uppsala Blasarsymfoniker &ndash; en amatorblasorkester som erbjuder konserter och musikupplevelser i Uppsala.</div>
       <div class="font-meta">
         <span>Source: <strong>Google Fonts</strong></span>
         <span>Weights: <strong>300, 400, 600</strong></span>
@@ -122,37 +516,102 @@
     </div>
   </section>
 
-  <!-- Type Scale -->
+  <!-- ── 03 Type Scale ────────────────────────────── -->
+
   <section>
-    <h2>Type Scale</h2>
+    <div class="section-header">
+      <span class="section-number">03</span>
+      <h2>Type Scale</h2>
+    </div>
     <div class="scale-card" id="typeScale"></div>
   </section>
 
-  <!-- Logo Usage -->
-  <section>
-    <h2>Logo</h2>
+  <!-- ── 04 DaisyUI Theme ─────────────────────────── -->
 
-    <div class="logo-demos">
+  <section>
+    <div class="section-header">
+      <span class="section-number">04</span>
+      <h2>DaisyUI Theme Mapping</h2>
+    </div>
+    <p class="section-note">The <code style="font-size:12px; background:var(--surface); padding:1px 4px; border-radius:3px;">data-theme="ubs"</code> theme maps brand colors to DaisyUI semantic tokens.</p>
+    <table class="theme-table">
+      <thead>
+        <tr>
+          <th>Token</th>
+          <th>Color</th>
+          <th>CSS Variable</th>
+        </tr>
+      </thead>
+      <tbody id="themeMap"></tbody>
+    </table>
+  </section>
+
+  <!-- ── 05 Logo ──────────────────────────────────── -->
+
+  <section>
+    <div class="section-header">
+      <span class="section-number">05</span>
+      <h2>Logo</h2>
+    </div>
+
+    <div class="logo-grid">
       <div class="logo-demo logo-demo-light">
-        <img src="ubs-logo.png" alt="UBS logo">
-        <span class="demo-caption">On light backgrounds</span>
+        <img src="ubs-logo.svg" alt="UBS logo on light">
+        <span class="demo-caption">Light background</span>
       </div>
       <div class="logo-demo logo-demo-dark">
-        <img src="ubs-logo.png" alt="UBS logo">
-        <span class="demo-caption" style="color:#6B6460">On dark backgrounds</span>
+        <img src="ubs-logo.svg" alt="UBS logo on dark">
+        <span class="demo-caption" style="color:rgba(250,248,245,0.5)">Dark background</span>
+      </div>
+      <div class="logo-demo logo-demo-red">
+        <img src="ubs-logo.svg" alt="UBS logo on red" style="filter: brightness(0) invert(1); opacity: 0.9;">
+        <span class="demo-caption" style="color:rgba(255,255,255,0.6)">On brand red (inverted)</span>
+      </div>
+      <div class="logo-demo logo-demo-brass">
+        <img src="ubs-logo.svg" alt="UBS logo on brass">
+        <span class="demo-caption" style="color:var(--black); opacity:0.5">On accent brass</span>
+      </div>
+    </div>
+
+    <div class="logo-guidelines">
+      <div class="guideline-row">
+        <span class="guideline-label">Minimum size</span>
+        <span class="guideline-value">32px height on screen, 10mm in print</span>
+      </div>
+      <div class="guideline-row">
+        <span class="guideline-label">Clear space</span>
+        <span class="guideline-value">At least the width of the "u" in the logo on all sides</span>
+      </div>
+      <div class="guideline-row">
+        <span class="guideline-label">File formats</span>
+        <span class="guideline-value">PNG (screen), SVG (preferred for web &amp; print)</span>
+      </div>
+      <div class="guideline-row">
+        <span class="guideline-label">Do not</span>
+        <span class="guideline-value">Rotate, stretch, recolor, or add effects to the logo</span>
       </div>
     </div>
   </section>
 
 </div>
 
+<!-- ── Footer ──────────────────────────────────────── -->
+
+<div class="footer">
+  <span class="footer-left">Uppsala Blasarsymfoniker &mdash; Graphical Profile</span>
+  <span class="footer-right">Updated 2026</span>
+</div>
+
 <script>
+  /* ── Color Palette ─── */
+
   const palette = [
-    { name: "UBS Red",    hex: "#B2292E", usage: "Primary: logo, buttons, accents",           textColor: "#fff" },
-    { name: "Dark Red",   hex: "#8B1A2B", usage: "Accent: hover states, emphasis",            textColor: "#fff" },
-    { name: "UBS Black",  hex: "#1A1A1A", usage: "Secondary/Neutral: navbar, dark UI, text",  textColor: "#fff" },
-    { name: "Warm Gray",  hex: "#6B6460", usage: "Captions, secondary text",                  textColor: "#fff" },
-    { name: "Warm White", hex: "#FAF8F5", usage: "Base: backgrounds, light surfaces",         textColor: "#1A1A1A" },
+    { name: "UBS Red",      hex: "#B2292E", role: "Primary",           usage: "Logo, buttons, accents, headings",  text: "#fff" },
+    { name: "Dark Red",     hex: "#8B1A2B", role: "Accent",            usage: "Hover states, active emphasis",     text: "#fff" },
+    { name: "Warm Brass",   hex: "#C4A35A", role: "Accent alt",        usage: "Decorative accents, highlights",    text: "#1A1A1A" },
+    { name: "UBS Black",    hex: "#1A1A1A", role: "Secondary/Neutral", usage: "Navbar, body text, dark surfaces",  text: "#fff" },
+    { name: "Warm Gray",    hex: "#6B6460", role: "Muted",             usage: "Captions, secondary text, borders", text: "#fff" },
+    { name: "Warm White",   hex: "#FAF8F5", role: "Base",              usage: "Page backgrounds, light surfaces",  text: "#1A1A1A" },
   ];
 
   const swatchContainer = document.getElementById("swatches");
@@ -161,28 +620,30 @@
     el.className = "swatch";
     el.innerHTML = `
       <div class="swatch-color" style="background:${c.hex}">
-        <span class="swatch-hex" style="color:${c.textColor}">${c.hex}</span>
+        <span class="swatch-hex" style="color:${c.text}">${c.hex}</span>
+        <div class="swatch-copied">COPIED</div>
       </div>
       <div class="swatch-info">
         <div class="swatch-name">${c.name}</div>
+        <div class="swatch-role">${c.role}</div>
         <div class="swatch-usage">${c.usage}</div>
       </div>`;
     el.addEventListener("click", () => {
       navigator.clipboard.writeText(c.hex).catch(() => {});
-      const hexEl = el.querySelector(".swatch-hex");
-      const orig = hexEl.textContent;
-      hexEl.textContent = "Copied!";
-      setTimeout(() => { hexEl.textContent = orig; }, 1200);
+      el.classList.add("copied");
+      setTimeout(() => el.classList.remove("copied"), 900);
     });
     swatchContainer.appendChild(el);
   });
 
+  /* ── Type Scale ─── */
+
   const typeScales = [
-    { label: "H1",      size: 36, font: "'Playfair Display', serif",     weight: 700, text: "Konsert i Uppsala",   color: "#1A1A1A" },
-    { label: "H2",      size: 28, font: "'Playfair Display', serif",     weight: 700, text: "Program & Repertoar", color: "#1A1A1A" },
-    { label: "H3",      size: 20, font: "'Playfair Display', serif",     weight: 400, text: "Om orkestern",        color: "#1A1A1A" },
-    { label: "Body",    size: 16, font: "'Source Sans 3', sans-serif",   weight: 400, text: "Uppsala Blåsarsymfoniker är en amatörblåsorkester som erbjuder konserter och musikupplevelser.", color: "#1A1A1A" },
-    { label: "Caption", size: 13, font: "'Source Sans 3', sans-serif",   weight: 400, text: "Foto: Uppsala Konsert & Kongress, 2026", color: "#6B6460" },
+    { label: "H1",      size: 36, font: "'Playfair Display', serif",   weight: 700, text: "Konsert i Uppsala" },
+    { label: "H2",      size: 28, font: "'Playfair Display', serif",   weight: 700, text: "Program & Repertoar" },
+    { label: "H3",      size: 20, font: "'Playfair Display', serif",   weight: 400, text: "Om orkestern" },
+    { label: "Body",    size: 16, font: "'Source Sans 3', sans-serif", weight: 400, text: "Uppsala Blasarsymfoniker ar en amatorblasorkester som erbjuder konserter och musikupplevelser." },
+    { label: "Caption", size: 13, font: "'Source Sans 3', sans-serif", weight: 400, text: "Foto: Uppsala Konsert & Kongress, 2026", color: "#6B6460" },
   ];
 
   const scaleContainer = document.getElementById("typeScale");
@@ -191,8 +652,35 @@
     row.className = "scale-row";
     row.innerHTML = `
       <span class="scale-label">${t.label}</span>
-      <span style="font-family:${t.font};font-size:${t.size}px;font-weight:${t.weight};color:${t.color};line-height:1.3">${t.text}</span>`;
+      <span class="scale-size">${t.size}px</span>
+      <span style="font-family:${t.font};font-size:${t.size}px;font-weight:${t.weight};color:${t.color||'#1A1A1A'};line-height:1.3">${t.text}</span>`;
     scaleContainer.appendChild(row);
+  });
+
+  /* ── DaisyUI Theme Map ─── */
+
+  const themeTokens = [
+    { token: "primary",         color: "#B2292E", variable: "--color-primary" },
+    { token: "primary-content", color: "#FFFFFF", variable: "--color-primary-content" },
+    { token: "secondary",       color: "#1A1A1A", variable: "--color-secondary" },
+    { token: "accent",          color: "#C4A35A", variable: "--color-accent" },
+    { token: "neutral",         color: "#1A1A1A", variable: "--color-neutral" },
+    { token: "base-100",        color: "#FAF8F5", variable: "--color-base-100" },
+    { token: "base-200",        color: "#F0EEEB", variable: "--color-base-200" },
+    { token: "base-300",        color: "#E0DDD8", variable: "--color-base-300" },
+    { token: "base-content",    color: "#1A1A1A", variable: "--color-base-content" },
+  ];
+
+  const themeBody = document.getElementById("themeMap");
+  themeTokens.forEach(t => {
+    const row = document.createElement("tr");
+    const border = (t.color === "#FFFFFF" || t.color === "#FAF8F5" || t.color === "#F0EEEB" || t.color === "#E0DDD8")
+      ? `border:1px solid #E0DDD8` : '';
+    row.innerHTML = `
+      <td><strong>${t.token}</strong></td>
+      <td><span class="theme-dot" style="background:${t.color};${border}"></span>${t.color}</td>
+      <td><span class="theme-var">${t.variable}</span></td>`;
+    themeBody.appendChild(row);
   });
 </script>
 </body>
