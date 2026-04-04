@@ -81,7 +81,7 @@ A person can have multiple membership periods (left and re-joined). Replaces the
 | Concert date | |
 | Rehearsal dates | List of dates |
 | Sheet music links | List of {label, URL}, admin-managed |
-| Status | Active / completed / planned |
+| Status | Derived from dates: **planned** (today < first rehearsal date), **active** (today ≥ first rehearsal date and ≤ concert date), **completed** (today > concert date) |
 
 ### Project assignment
 
@@ -320,7 +320,7 @@ A person can have multiple membership periods (left and re-joined). Replaces the
 > As a **member**, I want to access the system via a link sent to my email.
 
 **Acceptance criteria:**
-- When a project starts (transitions to active), all assigned members receive an email with a unique access link
+- When an admin triggers "send magic links" for a project, all assigned members receive an email with a unique access link
 - The link authenticates the member and sets a browser cookie
 - The cookie is valid until the latest project end date the member is assigned to
 - The link/cookie grants access to all of the member's projects, not just the triggering one

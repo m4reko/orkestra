@@ -163,8 +163,8 @@ erDiagram
         text city
         int section_id FK
         text metadata
-        text created_at
-        text updated_at
+        int created_at "unix timestamp"
+        int updated_at "unix timestamp"
     }
 
     person_instrument {
@@ -175,8 +175,8 @@ erDiagram
     membership_period {
         int id PK
         int person_id FK
-        text start_date
-        text end_date "NULL = active"
+        text start_date "ISO 8601 date"
+        text end_date "ISO 8601 date, NULL = active"
     }
 
     account {
@@ -194,15 +194,14 @@ erDiagram
     project {
         int id PK
         text name
-        text concert_date
-        text status "planned|active|completed"
-        text created_at
+        text concert_date "ISO 8601 date"
+        int created_at "unix timestamp"
     }
 
     rehearsal_date {
         int id PK
         int project_id FK
-        text date
+        text date "ISO 8601 date"
     }
 
     sheet_music_link {
@@ -227,15 +226,15 @@ erDiagram
         int rehearsal_date_id FK
         int reported_by_person_id FK
         int reported_by_account_id FK
-        text created_at
+        int created_at "unix timestamp"
     }
 
     magic_token {
         int id PK
         int person_id FK
         text token_hash UK
-        text expires_at
-        text created_at
+        int expires_at "unix timestamp"
+        int created_at "unix timestamp"
     }
 
     notification {
@@ -243,8 +242,8 @@ erDiagram
         int person_id FK
         text type
         text payload "JSON"
-        text created_at
-        text sent_at "NULL until sent"
+        int created_at "unix timestamp"
+        int sent_at "unix timestamp, NULL until sent"
     }
 
     section ||--o{ instrument : contains
@@ -267,7 +266,7 @@ erDiagram
     person ||--o{ notification : ""
 ```
 
-All dates stored as ISO 8601 text. Migration tracking is handled by `yoyo-migrations` (its own internal tables).
+Calendar dates (concert, rehearsal, membership) stored as ISO 8601 date strings (YYYY-MM-DD). Timestamps (created_at, updated_at, etc.) stored as Unix timestamp integers. Migration tracking is handled by `yoyo-migrations` (its own internal tables).
 
 ### SQLite pragmas (set on every connection)
 
@@ -295,7 +294,7 @@ New admin/leader accounts are created by an existing admin (pre-authorized, not 
 
 ### Member: Magic links
 
-1. Admin transitions project to "active"
+1. Admin triggers "send magic links" for a project (e.g. when assignments are finalized)
 2. System generates a unique token per assigned member (via `secrets.token_urlsafe`)
 3. Token hash (SHA-256) stored in `magic_token` table
 4. Token + member info queued as a pending notification (for Apps Script to poll and send via Gmail)
