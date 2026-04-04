@@ -1,8 +1,8 @@
 import gleam/erlang/process
 import mist
-import orchestra/database
-import orchestra/router
-import orchestra/web.{Context}
+import orkestra/database
+import orkestra/router
+import orkestra/web.{Context}
 import wisp
 import wisp/wisp_mist
 
@@ -11,7 +11,7 @@ pub fn main() -> Nil {
 
   let secret_key_base = wisp.random_string(64)
 
-  let assert Ok(priv_dir) = wisp.priv_directory("orchestra")
+  let assert Ok(priv_dir) = wisp.priv_directory("orkestra")
   let static_directory = priv_dir <> "/static"
 
   // Open DB and configure

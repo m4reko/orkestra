@@ -1,4 +1,4 @@
-# Orchestra
+# Orkestra
 
 Internal member and project management system for Uppsala Blåsarsymfoniker.
 
@@ -6,10 +6,10 @@ Internal member and project management system for Uppsala Blåsarsymfoniker.
 
 ```sh
 gleam run                                        # Start server on http://localhost:8000
-sqlite3 orchestra.db < scripts/seed_dev_data.sql # Seed dev data (optional)
+sqlite3 orkestra.db < scripts/seed_dev_data.sql # Seed dev data (optional)
 ```
 
-The server creates `orchestra.db` and runs migrations automatically on startup.
+The server creates `orkestra.db` and runs migrations automatically on startup.
 
 ## Development
 

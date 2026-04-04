@@ -6,8 +6,8 @@ import hx
 import lustre/attribute
 import lustre/element.{type Element}
 import lustre/element/html
-import orchestra/models/person.{type MemberRow}
-import orchestra/models/section.{type Section}
+import orkestra/models/person.{type MemberRow}
+import orkestra/models/section.{type Section}
 
 pub fn list_page(
   members: List(MemberRow),

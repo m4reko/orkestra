@@ -15,13 +15,13 @@ const module_header = "// THIS FILE IS GENERATED. DO NOT EDIT.
 // Regenerate with `gleam run -m sqlgen`"
 
 fn generate_sql_module() -> Nil {
-  let module_path = "src/orchestra/generated/sql.gleam"
+  let module_path = "src/orkestra/generated/sql.gleam"
   let assert Ok(files) = simplifile.read_directory("sql")
   let assert Ok(functions) = list.try_map(files, generate_sql_function)
 
   let imports = [
     "import gleam/dynamic/decode", "import gleam/result",
-    "import orchestra/error.{type Error}", "import sqlight",
+    "import orkestra/error.{type Error}", "import sqlight",
   ]
   let module =
     string.join(
@@ -35,7 +35,7 @@ fn generate_sql_module() -> Nil {
     )
 
   // Ensure directory exists
-  let assert Ok(_) = simplifile.create_directory_all("src/orchestra/generated")
+  let assert Ok(_) = simplifile.create_directory_all("src/orkestra/generated")
   let assert Ok(_) = simplifile.write(to: module_path, contents: module <> "\n")
   Nil
 }

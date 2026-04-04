@@ -6,7 +6,7 @@ import simplifile
 import sqlight
 import wisp
 
-const db_path = "./orchestra.db"
+const db_path = "./orkestra.db"
 
 pub fn connect() -> Result(sqlight.Connection, sqlight.Error) {
   sqlight.open(db_path)
@@ -28,7 +28,7 @@ pub fn migrate(db: sqlight.Connection) -> Result(Nil, sqlight.Error) {
     db,
   ))
 
-  let assert Ok(priv_dir) = wisp.priv_directory("orchestra")
+  let assert Ok(priv_dir) = wisp.priv_directory("orkestra")
   let migrations_dir = priv_dir <> "/migrations"
 
   case simplifile.read_directory(migrations_dir) {

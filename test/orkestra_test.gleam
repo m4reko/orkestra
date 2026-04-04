@@ -5,6 +5,6 @@ pub fn main() -> Nil {
 }
 
 pub fn smoke_test() {
-  let name = "orchestra"
-  assert name == "orchestra"
+  let name = "orkestra"
+  assert name == "orkestra"
 }

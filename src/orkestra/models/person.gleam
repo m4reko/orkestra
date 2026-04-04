@@ -3,7 +3,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
-import orchestra/error.{type Error}
+import orkestra/error.{type Error}
 import sqlight
 
 pub type MemberRow {

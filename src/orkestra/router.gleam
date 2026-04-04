@@ -1,6 +1,6 @@
 import gleam/http.{Get}
-import orchestra/web.{type Context}
-import orchestra/web/members
+import orkestra/web.{type Context}
+import orkestra/web/members
 import wisp.{type Request, type Response}
 
 pub fn handle_request(req: Request, ctx: Context) -> Response {

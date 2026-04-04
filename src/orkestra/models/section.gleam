@@ -1,6 +1,6 @@
 import gleam/dynamic/decode
 import gleam/result
-import orchestra/error.{type Error}
+import orkestra/error.{type Error}
 import sqlight
 
 pub type Section {

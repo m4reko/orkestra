@@ -55,11 +55,11 @@ Same approach as the Python version: an external Google Apps Script polls the ap
 Follows the [jsorm](https://github.com/aosasona/jsorm) convention: `web/` for request handlers, `pages/` for HTML views, `models/` for data types + DB operations, `lib/` for utilities.
 
 ```
-orchestra/
+orkestra/
 ├── src/
-│   ├── orchestra.gleam           # Entry point: migrations, Mist start
+│   ├── orkestra.gleam           # Entry point: migrations, Mist start
 │   ├── sqlgen.gleam              # Code generator: reads sql/ → generated/sql.gleam
-│   └── orchestra/
+│   └── orkestra/
 │       ├── router.gleam          # Top-level route dispatch
 │       ├── web.gleam             # Context type, middleware stack
 │       ├── database.gleam        # Connection helpers, pragmas, migration runner
@@ -113,9 +113,9 @@ The top-level router dispatches on path segments via pattern matching. Each `web
 
 ```gleam
 // router.gleam
-import orchestra/web/members
-import orchestra/web/projects
-import orchestra/web/api
+import orkestra/web/members
+import orkestra/web/projects
+import orkestra/web/api
 
 pub fn handle_request(req: Request, ctx: Context) -> Response {
   use req, ctx <- web.middleware(req, ctx)
@@ -203,15 +203,15 @@ pub fn middleware(
 ### Entry point with supervision
 
 ```gleam
-// orchestra.gleam
+// orkestra.gleam
 pub fn main() -> Nil {
   wisp.configure_logger()
 
   let secret_key_base = get_secret_key_base()
-  let assert Ok(priv_dir) = wisp.priv_directory("orchestra")
+  let assert Ok(priv_dir) = wisp.priv_directory("orkestra")
 
   // Open DB and run migrations
-  let assert Ok(db) = sqlight.open("./orchestra.db")
+  let assert Ok(db) = sqlight.open("./orkestra.db")
   let assert Ok(Nil) = db.configure(db)
   let assert Ok(Nil) = db.run_migrations(db, priv_dir <> "/migrations")
 
@@ -424,8 +424,8 @@ Each model file in `models/` owns its type, decoder, and public DB operations. M
 
 ```gleam
 // models/person.gleam
-import orchestra/generated/sql
-import orchestra/error.{type Error}
+import orkestra/generated/sql
+import orkestra/error.{type Error}
 
 pub type Person {
   Person(
@@ -477,7 +477,7 @@ SELECT id, first_name, last_name, email, phone, section_id
 FROM person WHERE section_id = ? ORDER BY last_name, first_name
 ```
 
-Running `gleam run -m sqlgen` reads every file in `sql/` and generates `src/orchestra/generated/sql.gleam` with a typed wrapper function per query:
+Running `gleam run -m sqlgen` reads every file in `sql/` and generates `src/orkestra/generated/sql.gleam` with a typed wrapper function per query:
 
 ```gleam
 // THIS FILE IS GENERATED. DO NOT EDIT.
