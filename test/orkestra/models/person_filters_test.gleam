@@ -9,8 +9,7 @@ pub fn no_filters_returns_empty_clauses_and_params_test() {
 }
 
 pub fn status_non_member_produces_null_check_without_param_test() {
-  let #(clauses, params) =
-    person_filters.build(Some("non-member"), None, None)
+  let #(clauses, params) = person_filters.build(Some("non-member"), None, None)
   assert clauses == " AND ms.status IS NULL"
   assert params == []
 }
