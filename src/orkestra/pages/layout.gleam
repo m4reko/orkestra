@@ -61,9 +61,7 @@ pub fn wrap(title: String, content: Element(a)) -> Element(a) {
               html.a(
                 [
                   attribute.href("/members"),
-                  attribute.class(
-                    "text-lg font-bold",
-                  ),
+                  attribute.class("text-lg font-bold"),
                   attribute.attribute(
                     "style",
                     "font-family: 'Playfair Display', serif",
