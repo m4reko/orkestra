@@ -19,7 +19,7 @@ jobs:
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "27"
-          gleam-version: "1.5"
+          gleam-version: "1.16"
 
       - name: Format code
         run: gleam format src test
@@ -44,7 +44,7 @@ jobs:
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "27"
-          gleam-version: "1.5"
+          gleam-version: "1.16"
 
       - name: Type check
         run: gleam check
