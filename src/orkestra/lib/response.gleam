@@ -10,7 +10,7 @@ pub fn html(req: Request, page: Element(a), fragment: Element(a)) -> Response {
   wisp.html_response(body, 200)
 }
 
-fn is_htmx_request(req: Request) -> Bool {
+pub fn is_htmx_request(req: Request) -> Bool {
   case request.get_header(req, "hx-request") {
     Ok("true") -> True
     _ -> False

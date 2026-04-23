@@ -1,12 +1,11 @@
 import gleam/dynamic/decode
 import gleam/int
-import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
-import gleam/string
 import gleam/time/timestamp
 import orkestra/error.{type Error}
 import orkestra/generated/sql
+import orkestra/models/person_filters
 import sqlight
 
 pub type MemberRow {
@@ -69,54 +68,13 @@ pub fn list_members(
     LEFT JOIN member_status ms ON p.id = ms.person_id
     WHERE 1=1"
 
-  let #(where_clauses, params) = build_filters(status, section, search)
+  let #(where_clauses, params) = person_filters.build(status, section, search)
 
   let sql =
     base <> where_clauses <> " GROUP BY p.id ORDER BY p.last_name, p.first_name"
 
   sqlight.query(sql, db, params, member_row_decoder())
   |> result.map_error(error.DatabaseError)
-}
-
-fn build_filters(
-  status: Option(String),
-  section: Option(String),
-  search: Option(String),
-) -> #(String, List(sqlight.Value)) {
-  let clauses: List(String) = []
-  let params: List(sqlight.Value) = []
-
-  let #(clauses, params) = case status {
-    Some("non-member") -> #(
-      list.append(clauses, [" AND ms.status IS NULL"]),
-      params,
-    )
-    Some(s) -> #(
-      list.append(clauses, [" AND ms.status = ?"]),
-      list.append(params, [sqlight.text(s)]),
-    )
-    None -> #(clauses, params)
-  }
-
-  let #(clauses, params) = case section {
-    Some(s) -> #(
-      list.append(clauses, [" AND p.section_id = ?"]),
-      list.append(params, [sqlight.text(s)]),
-    )
-    None -> #(clauses, params)
-  }
-
-  let #(clauses, params) = case search {
-    Some(s) -> #(
-      list.append(clauses, [
-        " AND (p.first_name || ' ' || p.last_name) LIKE ?",
-      ]),
-      list.append(params, [sqlight.text("%" <> s <> "%")]),
-    )
-    None -> #(clauses, params)
-  }
-
-  #(string.join(clauses, ""), params)
 }
 
 pub fn create_person(
