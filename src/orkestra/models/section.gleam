@@ -1,6 +1,6 @@
 import gleam/dynamic/decode
-import gleam/result
 import orkestra/error.{type Error}
+import orkestra/generated/sql
 import sqlight
 
 pub type Section {
@@ -14,11 +14,5 @@ fn section_decoder() -> decode.Decoder(Section) {
 }
 
 pub fn list_all(db: sqlight.Connection) -> Result(List(Section), Error) {
-  sqlight.query(
-    "SELECT id, name FROM section ORDER BY name",
-    db,
-    [],
-    section_decoder(),
-  )
-  |> result.map_error(error.DatabaseError)
+  sql.list_sections(db, [], section_decoder())
 }
